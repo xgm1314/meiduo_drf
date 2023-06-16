@@ -38,6 +38,9 @@ INSTALLED_APPS = [
 
     'rest_framework',  # 注册drf
     'corsheaders',  # cors跨域
+
+    'apps.users',  # 注册子应用
+    'apps.verifications',
 ]
 
 MIDDLEWARE = [
