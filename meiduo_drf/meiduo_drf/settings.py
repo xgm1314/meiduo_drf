@@ -214,7 +214,8 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'utils.exceptions.exception_handler',  # 异常处理
 }
 
-AUTH_USER_MODEL = 'users.user'
+AUTH_USER_MODEL = 'users.user'  # 修改Django认证系统的用户模型
+AUTHENTICATION_BACKENDS = ['apps.users.utils.UsernameMobileAuthBackend']  # 修改Django用户认证后端类
 
 # 追加白名单
 CORS_ORIGIN_WHITELIST = (
@@ -224,8 +225,8 @@ CORS_ORIGIN_WHITELIST = (
 CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
 CORS_ORIGIN_ALLOW_ALL = True
 
-
 # JWT的有效期
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),  # 指明token的有效期
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'apps.users.utils.jwt_response_payload_handler'  # 修改JWT登录视图的构造响应数据的函数
 }

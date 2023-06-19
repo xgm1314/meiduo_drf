@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.urls import path, re_path
 
-from .views import CreateAPIView, UsernameAPIView,MobileAPIView
+from rest_framework_jwt.views import obtain_jwt_token
+
+from .views import CreateAPIView, UsernameAPIView, MobileAPIView
 
 from apps.users.serializers import CreateUserSerializer
 
@@ -14,5 +16,8 @@ urlpatterns = [
     # path('users/<username>/count/', UsernameAPIView.as_view()),  # 用户名校验
     re_path(r'mobiles/(?P<mobile>1[3-9]\d{9})/count/$', MobileAPIView.as_view()),  # 手机号校验
     # path('mobiles/<mobile>/count/', MobileAPIView.as_view()),  # 手机号校验
+
+    # jwt登录
+    path('jwtlogin/', obtain_jwt_token),
 
 ]
