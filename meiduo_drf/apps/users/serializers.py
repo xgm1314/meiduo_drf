@@ -14,13 +14,14 @@ class CreateUserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(label='确认密码', write_only=True, max_length=32)
     sms_code = serializers.CharField(label='验证码', write_only=True, max_length=4)
     allow = serializers.CharField(label='同意协议', write_only=True)
+    token = serializers.CharField(label='token', read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'password2', 'mobile', 'sms_code', 'allow']
+        fields = ['id', 'username', 'password', 'password2', 'mobile', 'sms_code', 'allow', 'token']
         extra_kwargs = {  # 修改字段
             'username': {
-                'min_length': 5,
+                'min_length': 2,
                 'max_length': 20,
                 'error_messages': {  # 自定义校验出错后的错误信息提示
                     'min_length': '用户名字不能少于5个字符',
@@ -28,8 +29,9 @@ class CreateUserSerializer(serializers.ModelSerializer):
                 }
             },
             'password': {
-                'min_length': 16,
+                'min_length': 6,
                 'max_length': 32,
+                "write_only": True,
                 'error_messages': {  # 自定义校验出错后的错误信息提示
                     'min_length': '密码不能少于16个字符',
                     'max_length': '密码不能大余32个字符',
@@ -76,4 +78,17 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user = User(**validated_data)  # 创建用户模型,给模型中的username和mobile属性赋值
         user.set_password(password)  # 密码加密之后保存
         user.save()  # 保存
+
+        # 生成token数据
+        from rest_framework_jwt.settings import api_settings
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+        # 生成载荷信息(payload),根据user的信息生成一个payload
+        payload = jwt_payload_handler(user)
+        # 根据payload和secret_key，采用HS256，生成token.
+        token = jwt_encode_handler(payload)
+        # print(token)
+        # 将token信息传递给用户信息
+        user.token = token
+
         return user

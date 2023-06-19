@@ -4,4 +4,4 @@
 # @File : constants
 # @Project : meiduo_drf
 # verifications子应用定义常量
-SMS_CODE_REDIS_EXPIRES = 30000  # 短信验证码有效期300s
+SMS_CODE_REDIS_EXPIRES = 300  # 短信验证码有效期300s
