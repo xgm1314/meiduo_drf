@@ -48,7 +48,7 @@ class OauthQQSerializer(serializers.Serializer):
         user = validated_data.get('user')
         if user is None:
             user = User.objects.create(  # 如果用户不存在，则创建用户
-                username=validated_data.get('mobile'),
+                username='MD_%s' % validated_data.get('mobile'),
                 mobile=validated_data.get('mobile')
             )
             user.set_password(validated_data.get('password'))

@@ -24,7 +24,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
                 'min_length': 2,
                 'max_length': 20,
                 'error_messages': {  # 自定义校验出错后的错误信息提示
-                    'min_length': '用户名字不能少于5个字符',
+                    'min_length': '用户名字不能少于2个字符',
                     'max_length': '用户名字不能大余20个字符',
                 }
             },
@@ -33,11 +33,17 @@ class CreateUserSerializer(serializers.ModelSerializer):
                 'max_length': 32,
                 "write_only": True,
                 'error_messages': {  # 自定义校验出错后的错误信息提示
-                    'min_length': '密码不能少于16个字符',
+                    'min_length': '密码不能少于6个字符',
                     'max_length': '密码不能大余32个字符',
                 }
             },
         }
+
+    def validate_username(self, value):
+        # 验证是否以字母开头
+        if not value[0].isalpha():
+            raise serializers.ValidationError('名字以字母开始')
+        return value
 
     def validate_mobile(self, value):
         """ 验证手机号 """
