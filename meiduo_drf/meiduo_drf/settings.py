@@ -40,8 +40,10 @@ INSTALLED_APPS = [
     'rest_framework',  # 注册drf
     'corsheaders',  # cors跨域
 
-    'apps.users',  # 注册子应用
-    'apps.verifications',
+    # 注册子应用
+    'apps.users',  # 用户
+    'apps.verifications',  # 发短信
+    'apps.oauth',  # 第三方登录
 ]
 
 MIDDLEWARE = [
@@ -230,3 +232,11 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),  # 指明token的有效期
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'apps.users.utils.jwt_response_payload_handler'  # 修改JWT登录视图的构造响应数据的函数
 }
+
+# QQ登录参数
+# 我们申请的 客户端id
+QQ_CLIENT_ID = '101474184'
+# 我们申请的 客户端秘钥
+QQ_CLIENT_SECRET = 'c6ce949e04e12ecc909ae6a8b09b637c'
+# 我们申请时添加的: 登录成功后回调的路径
+QQ_REDIRECT_URI = 'http://www.meiduo.site:8080/oauth_callback.html'
