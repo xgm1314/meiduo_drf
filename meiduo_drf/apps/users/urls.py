@@ -3,7 +3,8 @@ from django.urls import path, re_path
 
 from rest_framework_jwt.views import obtain_jwt_token
 
-from .views import CreateAPIView, UsernameAPIView, MobileAPIView
+from .views import CreateAPIView, UsernameAPIView, MobileAPIView, UserRetrieveAPIView, UserUpdateAPIView, \
+    EmailVerifyAPIView
 
 from apps.users.serializers import CreateUserSerializer
 
@@ -20,4 +21,9 @@ urlpatterns = [
     # jwt登录
     path('jwtlogin/', obtain_jwt_token),
 
+    # path('user/', UserRetrieveAPIView.as_view()),  # 查询详情视图 不接PK
+    path('users/<pk>/', UserRetrieveAPIView.as_view()),  # 查询详情视图
+    # path('email/', UserRetrieveAPIView.as_view()),  # 修改邮箱视图 不接PK
+    path('emails/<int:pk>/', UserUpdateAPIView.as_view()),  # 修改邮箱视图
+    path('emails/verification/', EmailVerifyAPIView.as_view()),  # 修改邮箱视图
 ]

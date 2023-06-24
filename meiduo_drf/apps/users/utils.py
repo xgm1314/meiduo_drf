@@ -49,3 +49,25 @@ class UsernameMobileAuthBackend(ModelBackend):
         user = get_user_by_account(username)  # 获取user
         if user and user.check_password(password):  # 判断当前前端传入的密码是否正确
             return user  # 返回user
+
+
+from django.conf import settings
+from itsdangerous import TimedJSONWebSignatureSerializer as TJWSSerializer, BadData
+
+
+def generic_openid(openid):
+    """ 数据加密 """
+    openid_serializer = TJWSSerializer(secret_key=settings.SECRET_KEY, expires_in=60 * 60 * 24)
+    access_token = openid_serializer.dumps({'openid': openid})
+    return access_token.decode()
+
+
+def check_access_token(token):
+    """ 解密数据 """
+    openid_serializer = TJWSSerializer(secret_key=settings.SECRET_KEY, expires_in=60 * 60 * 24)
+    try:
+        access_token = openid_serializer.loads(token)
+    except BadData:
+        return None
+    else:
+        return access_token.get('openid')

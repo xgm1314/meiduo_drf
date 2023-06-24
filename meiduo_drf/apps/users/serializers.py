@@ -7,6 +7,7 @@ from rest_framework import serializers
 from .models import User
 import re
 from django_redis import get_redis_connection
+from django.conf import settings
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -98,3 +99,68 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.token = token
 
         return user
+
+
+class UserRetrieveModelSerializer(serializers.ModelSerializer):
+    """ 详情用户展示序列化器 """
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'mobile', 'email', 'email_active']
+        extra_kwargs = {
+            'email': {
+                'required': True
+            }
+        }
+
+
+class UserUpdateModelSerializer(serializers.ModelSerializer):
+    """ 修改email序列化器 """
+
+    class Meta:
+        model = User
+        fields = ['id', 'email']
+        extra_kwargs = {
+            'email': {
+                'required': True
+            }
+        }
+
+    def update(self, instance, validated_data):
+        # 重写修改方法，方便发送激活邮箱
+        instance.email = validated_data.get('email')
+        instance.save()
+
+        # 发送邮件
+        email = instance.email
+        subject = 'fyq_love_xgm'  # 主题
+        message = 'fyq_love_xgm'  # 邮件内容
+        from_email = settings.EMAIL_HOST_USER  # 发件人
+        recipient_list = [email]  # 收件人列表
+
+        # 生成激活链接
+        # # 方式一：传参
+        # from apps.users.utils import generic_openid
+        # token_id = generic_openid(instance.id)
+
+        # 方式二：利用模型类
+        token_id=instance.generate_email_verify_url()
+
+        verify_url = "http://www.meiduo.site:8080/success_verify_email.html?token=%s" % token_id
+        # verify_url = "http://127.0.0.1:8001/email/verification/?token=%s" % token_id # 测试用
+
+        # 4.2 组织我们的激活邮件
+        html_message = '<p>尊敬的用户您好！</p>' \
+                       '<p>感谢您使用美多商城。</p>' \
+                       '<p>您的邮箱为：%s 。请点击此链接激活您的邮箱：</p>' \
+                       '<p><a href="%s">%s<a></p>' % (email, verify_url, verify_url)
+        # 使用celery异步发送邮件
+        from celery_tasks.email.tasks import send_verify_email
+        send_verify_email.delay(
+            subject=subject,
+            message=message,
+            from_email=from_email,
+            recipient_list=recipient_list,
+            html_message=html_message)
+
+        return instance

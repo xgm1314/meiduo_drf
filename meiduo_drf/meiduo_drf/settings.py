@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',  # 注册drf
+    # 'rest_framework_simplejwt',  # JWT
     'corsheaders',  # cors跨域
 
     # 注册子应用
@@ -214,6 +215,11 @@ LOGGING = {
 }
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'utils.exceptions.exception_handler',  # 异常处理
+    'DEFAULT_AUTHENTICATION_CLASSES': [  # 认证
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT认证类，放在第一位是默认项
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
 }
 
 AUTH_USER_MODEL = 'users.user'  # 修改Django认证系统的用户模型
@@ -240,3 +246,18 @@ QQ_CLIENT_ID = '101474184'
 QQ_CLIENT_SECRET = 'c6ce949e04e12ecc909ae6a8b09b637c'
 # 我们申请时添加的: 登录成功后回调的路径
 QQ_REDIRECT_URI = 'http://www.meiduo.site:8080/oauth_callback.html'
+
+# 添加163邮箱发送配置
+#  让django的哪个类来发送邮件
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# 邮件服务器的主机
+EMAIL_HOST = 'smtp.163.com'
+# 邮件服务器的端口号
+EMAIL_PORT = 25
+# 发送邮件的邮箱
+EMAIL_HOST_USER = 'fyq31780209@163.com'
+# 在邮箱中设置的客户端授权密码
+EMAIL_HOST_PASSWORD = 'WBGDQNICFJVQSEWZ'
+
+# 收件人看到的发件人
+EMAIL_FROM = 'fyq_love_xgm.com'
