@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'apps.users',  # 用户
     'apps.verifications',  # 发短信
     'apps.oauth',  # 第三方登录
+    'apps.areas',  # 省市区数据
 ]
 
 MIDDLEWARE = [
@@ -261,3 +262,9 @@ EMAIL_HOST_PASSWORD = 'WBGDQNICFJVQSEWZ'
 
 # 收件人看到的发件人
 EMAIL_FROM = 'fyq_love_xgm.com'
+
+# DRF扩展配置省市区数据缓存
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 60,  # 缓存时间
+    'DEFAULT_USE_CACHE': 'default',  # 缓存存储
+}
