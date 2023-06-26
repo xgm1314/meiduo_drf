@@ -2,9 +2,10 @@ from django.contrib import admin
 from django.urls import path, re_path
 
 from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework.routers import DefaultRouter
 
 from .views import CreateAPIView, UsernameAPIView, MobileAPIView, UserRetrieveAPIView, UserUpdateAPIView, \
-    EmailVerifyAPIView
+    EmailVerifyAPIView, AddressGenericViewSet
 
 from apps.users.serializers import CreateUserSerializer
 
@@ -27,3 +28,7 @@ urlpatterns = [
     path('emails/<int:pk>/', UserUpdateAPIView.as_view()),  # 修改邮箱视图
     path('emails/verification/', EmailVerifyAPIView.as_view()),  # 修改邮箱视图
 ]
+
+router = DefaultRouter()
+router.register(prefix='address', viewset=AddressGenericViewSet, basename='address')
+urlpatterns += router.urls

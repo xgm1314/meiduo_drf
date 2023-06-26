@@ -4,14 +4,18 @@ from django.shortcuts import render, HttpResponse
 
 # Create your views here.
 from django.shortcuts import render
+from rest_framework.decorators import action
 from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
 
-from .serializers import CreateUserSerializer, UserRetrieveModelSerializer, UserUpdateModelSerializer
-from .models import User
+from .serializers import CreateUserSerializer, UserRetrieveModelSerializer, UserUpdateModelSerializer, \
+    UserAddressModelSerializer, TitleModelSerializer
+from .models import User, Address
 
 # Create your views here.
 from .utils import check_access_token
@@ -128,3 +132,79 @@ class EmailVerifyAPIView(APIView):
         user.save()
         return Response({'message': 'ok'})
         # return HttpResponse({'message': 'ok'})
+
+
+class AddressGenericViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
+    """ 用户收货地址的增删改查 """
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserAddressModelSerializer
+
+    # queryset = Address.objects.all()
+
+    def get_queryset(self):
+        return self.request.user.addresses.filter(is_deleted=False)
+
+    def list(self, request):
+        """ 展示用户所有地址 """
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(instance=queryset, many=True)
+        user = self.request.user
+        return Response({
+            'user_id': user.id,
+            'default_address_id': user.default_address_id,
+            'limit': 20,
+            'address': serializer.data
+        }, status=status.HTTP_200_OK)
+
+    def create(self, request):
+        """ 新增地址 """
+        """
+        {
+            "title": "活在梦里",
+            "receiver":"吱吱吱吱在",
+            "province_id":110000,
+            "city_id":110100,
+            "district_id":110101,
+            "place":"zxcvbn",
+            "mobile":13112345678
+        }
+        """
+        user = request.user
+        # count = user.addresses.all().count()  # 根据用户查询出所有的地址
+        count = Address.objects.filter(user=user, is_deleted=False).count()  # 根据关联查询，查出所有地址
+        if count > 20:  # 设置收货数量的上限
+            return Response({'message': '收货数量达到上限'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(data=request.data)  # 序列化器进行反序列化
+        serializer.is_valid(raise_exception=True)  # 校验
+        data = serializer.save()  # 保存
+
+        if count == 0:  # 如果添加的是第一个地址，则设置为是默认地址
+            user = User.objects.get(id=request.user.id)
+            user.default_address_id = data.id
+            user.save()
+
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, pk):
+        """ 删除地址 """
+        address = self.get_object()
+        address.is_deleted = True
+        address.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(methods=['put'], detail=True)
+    def title(self, request, pk=None):
+        """ 修改标题 """
+        address = self.get_object()
+        serializer = TitleModelSerializer(instance=address, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(data=serializer.data)
+
+    @action(methods=['put'], detail=True)
+    def status(self, request, pk=None):
+        """ 设置默认地址 """
+        address = self.get_object()
+        request.user.default_address = address
+        request.user.save()
+        return Response({'message': 'ok'}, status=status.HTTP_200_OK)

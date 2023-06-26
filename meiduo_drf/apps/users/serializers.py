@@ -4,10 +4,12 @@
 # @File : serializers
 # @Project : meiduo_drf
 from rest_framework import serializers
-from .models import User
+from .models import User, Address
 import re
 from django_redis import get_redis_connection
 from django.conf import settings
+
+from ..areas.models import Area
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -144,7 +146,7 @@ class UserUpdateModelSerializer(serializers.ModelSerializer):
         # token_id = generic_openid(instance.id)
 
         # 方式二：利用模型类
-        token_id=instance.generate_email_verify_url()
+        token_id = instance.generate_email_verify_url()
 
         verify_url = "http://www.meiduo.site:8080/success_verify_email.html?token=%s" % token_id
         # verify_url = "http://127.0.0.1:8001/email/verification/?token=%s" % token_id # 测试用
@@ -164,3 +166,37 @@ class UserUpdateModelSerializer(serializers.ModelSerializer):
             html_message=html_message)
 
         return instance
+
+
+class UserAddressModelSerializer(serializers.ModelSerializer):
+    """ 用户地址序列化器 """
+
+    # province = serializers.StringRelatedField(read_only=True)
+    # city = serializers.StringRelatedField(read_only=True)
+    # district = serializers.StringRelatedField(read_only=True)
+    # # province_id = serializers.IntegerField(label='省ID', read_only=True)
+    # city_id = serializers.IntegerField(label='市ID', read_only=True)
+    # district_id = serializers.IntegerField(label='区县ID', read_only=True)
+
+    class Meta:
+        model = Address
+        exclude = ('user', 'is_deleted', 'create_time', 'update_time')
+
+    def validate_mobile(self, value):
+        """ 验证手机号 """
+        if not re.match('1[345789]\d{9}', value):
+            raise serializers.ValidationError('手机号格式不正确')
+        return value
+
+    def create(self, validated_data):
+        user = self.context['request'].user  # 获取用户模型对象
+        validated_data['user'] = user  # 将用户模型对象保存到字典中
+        return Address.objects.create(**validated_data)
+
+
+class TitleModelSerializer(serializers.ModelSerializer):
+    """ 标题修改序列化器 """
+
+    class Meta:
+        model = Address
+        fields = ['title']
