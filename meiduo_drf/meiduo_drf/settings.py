@@ -14,6 +14,8 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+import utils.fastdfs.fdfs_storage
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -46,6 +48,8 @@ INSTALLED_APPS = [
     'apps.verifications',  # 发短信
     'apps.oauth',  # 第三方登录
     'apps.areas',  # 省市区数据
+    'apps.goods',  # 商品
+    'apps.contents',  # 广告
 ]
 
 MIDDLEWARE = [
@@ -268,3 +272,9 @@ REST_FRAMEWORK_EXTENSIONS = {
     'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 60,  # 缓存时间
     'DEFAULT_USE_CACHE': 'default',  # 缓存存储
 }
+
+# # FastDFS
+# FDFS_BASE_URL = 'http://虚拟机IP:8888/'
+# FDFS_CLIENT_CONF = (BASE_DIR, 'utils.fastdfs.client.conf')
+# # django文件存储
+# DEFAULT_FILE_STORAGE='utils.fastdfs.fdfs_storage.FastDFSStorage'
