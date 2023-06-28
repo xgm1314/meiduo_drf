@@ -6,9 +6,9 @@
 from celery import Celery
 import os
 
-# celery -A celery_tasks.main worker --concurrency=4 --loglevel=INFO -P threads 运行celery
+# celery -A celery_tasks.main worker --concurrency=4 --loglevel=INFO -P threads     # 运行celery
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'meiduo_drf.settings')  # 为celery的运行设置django的环境
 
 celery_app = Celery('meiduo')  # 创建celery实例对象
 celery_app.config_from_object('celery_tasks.config')  # 加载配置文件
-celery_app.autodiscover_tasks(['celery_tasks.sms', 'celery_tasks.email'])  # 自动注册异步任务
+celery_app.autodiscover_tasks(['celery_tasks.sms', 'celery_tasks.email', 'celery_tasks.html'])  # 自动注册异步任务

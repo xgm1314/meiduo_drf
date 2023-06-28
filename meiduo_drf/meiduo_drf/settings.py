@@ -296,6 +296,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '/media/')
 CKEDITOR_UPLOAD_PATH = 'image/'  # 上传图片保存的路径，使用FastDFS设置为空
 GENERATED_STATIC_HTML_FILES_DIR = os.path.join(BASE_DIR, 'templates')  # 静态化主页存储路径
 
+"""
 # 定时任务（windows系统运行会出问题）
 CRONJOBS = [
     ('*/1 * * * * ', 'apps.contents.crons.generate_static_index_html',
@@ -303,3 +304,4 @@ CRONJOBS = [
 ]
 # 解决crontab中文问题
 CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
+"""
