@@ -18,6 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('ckeditor/', include('ckeditor_uploader.urls')),  # 富文本编辑器
 
     path('', include('apps.users.urls')),  # 用户注册子应用
     path('', include('apps.verifications.urls')),  # 发送验证码子应用

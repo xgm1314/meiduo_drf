@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'rest_framework',  # 注册drf
     # 'rest_framework_simplejwt',  # JWT
     'corsheaders',  # cors跨域
+    'ckeditor',  # 富文本编辑器
+    'ckeditor_uploader',  # 富文本编辑器上传图片模块
+    'django_crontab',  # 定时任务
 
     # 注册子应用
     'apps.users',  # 用户
@@ -67,7 +70,7 @@ ROOT_URLCONF = 'meiduo_drf.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -278,3 +281,25 @@ REST_FRAMEWORK_EXTENSIONS = {
 # FDFS_CLIENT_CONF = (BASE_DIR, 'utils.fastdfs.client.conf')
 # # django文件存储
 # DEFAULT_FILE_STORAGE='utils.fastdfs.fdfs_storage.FastDFSStorage'
+
+
+# 富文本编辑器ckeditor配置
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',  # 工具条功能
+        'height': 300,  # 编辑器高度
+        # 'width': 300,  # 编辑器宽度
+    },
+}
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '/media/')
+CKEDITOR_UPLOAD_PATH = 'image/'  # 上传图片保存的路径，使用FastDFS设置为空
+GENERATED_STATIC_HTML_FILES_DIR = os.path.join(BASE_DIR, 'templates')  # 静态化主页存储路径
+
+# 定时任务（windows系统运行会出问题）
+CRONJOBS = [
+    ('*/1 * * * * ', 'apps.contents.crons.generate_static_index_html',
+     '>> /Users/lenovo/Desktop/redis_ceshi/meiduo_xuexi_drf/meiduo_drf/logs/crontab.log')
+]
+# 解决crontab中文问题
+CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
