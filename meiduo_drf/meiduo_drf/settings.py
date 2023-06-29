@@ -228,6 +228,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
+    # 分页
+    'DEFAULT_PAGINATION_CLASS': 'utils.page.PageNum',
+    'PAGE_SIZE': 10,
 }
 
 AUTH_USER_MODEL = 'users.user'  # 修改Django认证系统的用户模型
