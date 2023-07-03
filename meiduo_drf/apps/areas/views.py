@@ -42,6 +42,7 @@ class AreasDetailAPIView(RetrieveAPIView):
 
 class AreasReadOnlyModelViewSet(CacheResponseMixin, ReadOnlyModelViewSet):
     """ 查询视图集 """
+    # pagination_class = None  # 禁用分页,不可用
 
     # CacheResponseMixin设置缓存
     def get_queryset(self):

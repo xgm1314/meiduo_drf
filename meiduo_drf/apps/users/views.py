@@ -13,12 +13,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
 
+from django_redis import get_redis_connection
+
 from .serializers import CreateUserSerializer, UserRetrieveModelSerializer, UserUpdateModelSerializer, \
-    UserAddressModelSerializer, TitleModelSerializer
+    UserAddressModelSerializer, TitleModelSerializer, UserBrowserHistorySerializer, SKUModelSerializer
 from .models import User, Address
 
 # Create your views here.
 from .utils import check_access_token
+from ..goods.models import SKU
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -208,3 +211,22 @@ class AddressGenericViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet
         request.user.default_address = address
         request.user.save()
         return Response({'message': 'ok'}, status=status.HTTP_200_OK)
+
+
+class UserBrowserHistoryCreateAPIView(CreateAPIView):
+    """ 用户商品浏览记录 """
+    serializer_class = UserBrowserHistorySerializer
+    permission_classes = [IsAuthenticated]
+    queryset = ''
+
+    def get(self, request):
+        """ 查询商品浏览记录 """
+        user = request.user  # 获取当前请求用户
+        redis_conn = get_redis_connection('history')  # 连接redis数据库
+        sku_ids = redis_conn.lrange('history_%s' % user.id, 0, -1)  # 获取redis中当前用户的浏览记录
+        sku_list = []
+        for sku_id in sku_ids:  # 循环获取列表中的数据
+            sku = SKU.objects.get(id=sku_id)
+            sku_list.append(sku)
+        serializer = SKUModelSerializer(instance=sku_list, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)

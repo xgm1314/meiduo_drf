@@ -5,7 +5,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 from rest_framework.routers import DefaultRouter
 
 from .views import CreateAPIView, UsernameAPIView, MobileAPIView, UserRetrieveAPIView, UserUpdateAPIView, \
-    EmailVerifyAPIView, AddressGenericViewSet
+    EmailVerifyAPIView, AddressGenericViewSet, UserBrowserHistoryCreateAPIView
 
 from apps.users.serializers import CreateUserSerializer
 
@@ -27,6 +27,7 @@ urlpatterns = [
     # path('email/', UserRetrieveAPIView.as_view()),  # 修改邮箱视图 不接PK
     path('emails/<int:pk>/', UserUpdateAPIView.as_view()),  # 修改邮箱视图
     path('emails/verification/', EmailVerifyAPIView.as_view()),  # 修改邮箱视图
+    path('browser_history/', UserBrowserHistoryCreateAPIView.as_view()),  # 用户浏览记录
 ]
 
 router = DefaultRouter()

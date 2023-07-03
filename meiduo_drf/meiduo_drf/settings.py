@@ -167,13 +167,13 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
-    # "celery": {  # 短信验证码
-    #     "BACKEND": "django_redis.cache.RedisCache",
-    #     "LOCATION": "redis://127.0.0.1:6379/15",
-    #     "OPTIONS": {
-    #         "CLIENT_CLASS": "django_redis.client.DefaultClient",
-    #     }
-    # }
+    "history": {  # 用户浏览记录
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/3",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
 }
 # session信息保存到redis数据库的1号库
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"

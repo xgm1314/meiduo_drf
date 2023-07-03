@@ -78,7 +78,8 @@ class SKUImageAdmin(admin.ModelAdmin):
         obj.save()
         sku = obj.sku  # 通过外键获取图片模型对象所关联的sku模型的id
         if not sku.default_image:
-            sku.default_image = obj
+            sku.default_image = obj.image  # obj.image.url图片路径  obj.image图片
+            sku.save()
         generate_static_sku_detail_html.delay(sku.id)
 
     def delete_model(self, request, obj):
