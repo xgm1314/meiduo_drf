@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'apps.areas',  # 省市区数据
     'apps.goods',  # 商品
     'apps.contents',  # 广告
+    'apps.carts',  # 购物车
 ]
 
 MIDDLEWARE = [
@@ -173,7 +174,15 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
-    }
+    },
+    "cart": {  # 用户浏览记录
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/4",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+
 }
 # session信息保存到redis数据库的1号库
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
