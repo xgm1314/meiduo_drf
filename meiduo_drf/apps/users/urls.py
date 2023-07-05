@@ -5,7 +5,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 from rest_framework.routers import DefaultRouter
 
 from .views import CreateAPIView, UsernameAPIView, MobileAPIView, UserRetrieveAPIView, UserUpdateAPIView, \
-    EmailVerifyAPIView, AddressGenericViewSet, UserBrowserHistoryCreateAPIView
+    EmailVerifyAPIView, AddressGenericViewSet, UserBrowserHistoryCreateAPIView, LoginObtainJSONWebToken
 
 from apps.users.serializers import CreateUserSerializer
 
@@ -20,7 +20,8 @@ urlpatterns = [
     # path('mobiles/<mobile>/count/', MobileAPIView.as_view()),  # 手机号校验
 
     # jwt登录
-    path('jwtlogin/', obtain_jwt_token),
+    # path('jwtlogin/', obtain_jwt_token),
+    path('jwtlogin/', LoginObtainJSONWebToken.as_view()),
 
     # path('user/', UserRetrieveAPIView.as_view()),  # 查询详情视图 不接PK
     path('users/<pk>/', UserRetrieveAPIView.as_view()),  # 查询详情视图

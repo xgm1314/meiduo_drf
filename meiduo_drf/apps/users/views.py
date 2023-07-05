@@ -15,6 +15,11 @@ from rest_framework.mixins import UpdateModelMixin, RetrieveModelMixin
 
 from django_redis import get_redis_connection
 
+from rest_framework_jwt.views import ObtainJSONWebToken
+from rest_framework_jwt.settings import api_settings
+
+from datetime import datetime
+
 from .serializers import CreateUserSerializer, UserRetrieveModelSerializer, UserUpdateModelSerializer, \
     UserAddressModelSerializer, TitleModelSerializer, UserBrowserHistorySerializer, SKUModelSerializer
 from .models import User, Address
@@ -22,6 +27,7 @@ from .models import User, Address
 # Create your views here.
 from .utils import check_access_token
 from ..goods.models import SKU
+from apps.carts.utils import merge_cart_cookie_to_redis
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -230,3 +236,32 @@ class UserBrowserHistoryCreateAPIView(CreateAPIView):
             sku_list.append(sku)
         serializer = SKUModelSerializer(instance=sku_list, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
+
+
+class LoginObtainJSONWebToken(ObtainJSONWebToken):
+    """ 自定义账号密码登录视图，实现购物车登录合并 """
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            user = serializer.object.get('user') or request.user
+            token = serializer.object.get('token')
+            response_data = jwt_response_payload_handler(token, user, request)
+            response = Response(response_data)
+            if api_settings.JWT_AUTH_COOKIE:
+                expiration = (datetime.utcnow() +
+                              api_settings.JWT_EXPIRATION_DELTA)
+                response.set_cookie(api_settings.JWT_AUTH_COOKIE,
+                                    token,
+                                    expires=expiration,
+                                    httponly=True)
+
+            merge_cart_cookie_to_redis(request, user, response)
+
+            return response
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -8,6 +8,7 @@ from QQLoginTool.QQtool import OAuthQQ
 
 from .models import OauthQQUser
 from .serializers import OauthQQSerializer
+from apps.carts.utils import merge_cart_cookie_to_redis
 
 import logging
 
@@ -75,12 +76,15 @@ class OauthQQAPIView(APIView):
             payload = jwt_payload_handler(user)
             # 根据payload和secret_key，采用HS256，生成token.
             token = jwt_encode_handler(payload)
-
-            return Response({
+            response=Response({
                 'token': token,
                 'user_id': user.id,
                 'username': user.username
             })
+
+            merge_cart_cookie_to_redis(request,user,response)
+
+            return response
 
     def post(self, request):
         """ openid绑定用户接口 """
@@ -95,8 +99,13 @@ class OauthQQAPIView(APIView):
         payload = jwt_payload_handler(user)
         # 根据payload和secret_key，采用HS256，生成token.
         token = jwt_encode_handler(payload)
-        return Response({
+
+        response = Response({
             'token': token,
             'user_id': user.id,
             'username': user.username
         })
+
+        merge_cart_cookie_to_redis(request, user, response)
+
+        return response
