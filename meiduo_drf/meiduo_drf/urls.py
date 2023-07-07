@@ -26,4 +26,5 @@ urlpatterns = [
     path('', include('apps.areas.urls')),  # 省市区子应用
     path('', include('apps.goods.urls')),  # 商品子应用
     path('', include('apps.carts.urls')),  # 商品子应用
+    path('', include('apps.orders.urls')),  # 订单子应用
 ]

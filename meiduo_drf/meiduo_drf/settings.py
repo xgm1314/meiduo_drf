@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'apps.goods',  # 商品
     'apps.contents',  # 广告
     'apps.carts',  # 购物车
+    'apps.orders',  # 订单
 ]
 
 MIDDLEWARE = [
