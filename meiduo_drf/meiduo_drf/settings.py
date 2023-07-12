@@ -17,6 +17,7 @@ from pathlib import Path
 import utils.fastdfs.fdfs_storage
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+# print(BASE_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     'apps.contents',  # 广告
     'apps.carts',  # 购物车
     'apps.orders',  # 订单
+    'apps.payment',  # 支付宝
 ]
 
 MIDDLEWARE = [
@@ -104,7 +106,15 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': '123456',
         'NAME': 'meiduo_drf'
-    }
+    },
+    'slave': {
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'NAME': 'meiduo_drf'
+    },
 }
 
 # Password validation
@@ -318,3 +328,12 @@ CRONJOBS = [
 # 解决crontab中文问题
 CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
 """
+
+# 支付宝支付参数
+ALIPAY_APPID = '2016091600523030'
+ALIPAY_DEBUG = True
+ALIPAY_URL = 'https://openapi.alipaydev.com/gateway.do'
+ALIPAY_RETURN_URL = 'http://www.meiduo.site:8080/pay_success.html'
+
+# # 配置数据库读写分离       # 未测试
+# DATABASE_ROUTERS = ['utils.db_router.MasterSlaveDBRouter']

@@ -27,4 +27,5 @@ urlpatterns = [
     path('', include('apps.goods.urls')),  # 商品子应用
     path('', include('apps.carts.urls')),  # 商品子应用
     path('', include('apps.orders.urls')),  # 订单子应用
+    path('', include('apps.payment.urls')),  # 支付宝子应用
 ]
