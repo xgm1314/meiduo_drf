@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'ckeditor',  # 富文本编辑器
     'ckeditor_uploader',  # 富文本编辑器上传图片模块
     'django_crontab',  # 定时任务
+    'drf_yasg',  # API生成器
 
     # 注册子应用
     'apps.users',  # 用户
@@ -251,6 +252,7 @@ REST_FRAMEWORK = {
     # 分页
     'DEFAULT_PAGINATION_CLASS': 'utils.page.PageNum',
     'PAGE_SIZE': 10,
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
 AUTH_USER_MODEL = 'users.user'  # 修改Django认证系统的用户模型
@@ -317,7 +319,7 @@ CKEDITOR_CONFIGS = {
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '/media/')
 CKEDITOR_UPLOAD_PATH = 'image/'  # 上传图片保存的路径，使用FastDFS设置为空
-GENERATED_STATIC_HTML_FILES_DIR = os.path.join(BASE_DIR, 'templates')  # 静态化主页存储路径
+GENERATED_STATIC_HTML_FILES_DIR = os.path.join(BASE_DIR, 'templates/templates')  # 静态化主页存储路径
 
 """
 # 定时任务（windows系统运行会出问题）
@@ -337,3 +339,29 @@ ALIPAY_RETURN_URL = 'http://www.meiduo.site:8080/pay_success.html'
 
 # # 配置数据库读写分离       # 未测试
 # DATABASE_ROUTERS = ['utils.db_router.MasterSlaveDBRouter']
+# # swagger 配置项
+# SWAGGER_SETTINGS = {
+#     # 基础样式
+#     'SECURITY_DEFINITIONS': {
+#         "basic": {
+#             'type': 'basic'
+#         }
+#     },
+#     # 如果需要登录才能够查看接口文档, 登录的链接使用 restframework 自带的.
+#     'LOGIN_URL': 'rest_framework:login',
+#     'LOGOUT_URL': 'rest_framework:logout',
+#     # 控制API列表的显示方式 None 所有操作均已折叠 list 列出所有操作 full 扩展所有操作
+#     'DOC_EXPANSION': None,
+#     # 是否显示请求标头
+#     'SHOW_REQUEST_HEADERS': True,
+#     # 切换使用Django Auth作为身份验证机制 将其设置为True将会在Swagger UI上显示一个登录/注销按钮，并将csrf_tokens发布到API
+#     'USE_SESSION_AUTH': True,
+#     # 接口文档中方法列表以首字母升序排列
+#     'APIS_SORTER': 'alpha',
+#     # 如果支持json提交, 则接口文档中包含json输入框
+#     'JSON_EDITOR': True,
+#     # 方法列表字母排序
+#     'OPERATIONS_SORTER': 'alpha',
+#     # 在线模式验证器的URL 修改为指向本地安装，或设置None为禁用
+#     'VALIDATOR_URL': None,
+# }

@@ -13,6 +13,10 @@ from apps.goods.models import GoodsChannel, GoodsChannelGroup
 
 from .models import ContentCategory
 
+"""
+在终端中的 python manage.py shell 交互式中可测试是否可以生成html页面
+"""
+
 
 def generate_static_index_html():
     """ 生成静态的主页html文件 """
